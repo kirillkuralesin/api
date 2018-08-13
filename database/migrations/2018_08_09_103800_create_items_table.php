@@ -20,8 +20,8 @@ class CreateItemsTable extends Migration
         });
         Schema::create('category_item', function(Blueprint $table)
         {
-            $table->integer('article_id')->unsigned()->index();
-            $table->foreign('article_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->integer('category_id')->unsigned()->index();
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->integer('item_id')->unsigned()->index();
             $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
         });

@@ -8,7 +8,7 @@ class Item extends Model
 {
     protected $fillable = ['name'];
 
-    public function category() {
+    public function categories() {
         return $this->belongsToMany('App\Category');
     }
 }
