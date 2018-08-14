@@ -23,21 +23,33 @@ class CategoryController extends Controller
     }
     public function create(Request $request)
     {
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|unique:categories|max:255'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
         $category = new Category();
-        $category = $category->create($request->all());
+        $category->create($request->all());
 
-        return response()->json($category, 201);
+        return response()->json('Category create', 201);
     }
 
     public function update(Request $request, $id)
     {
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|unique:categories,id,' . $id . '|max:255'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
         $category = Category::find($id);
         if (is_null($category)) {
             return response()->json('Category not found', 400);
         }
         $category->update($request->all());
 
-        return response()->json($category, 200);
+        return response()->json('Category update', 200);
     }
 
     public function delete(Request $request, $id)
@@ -48,6 +60,6 @@ class CategoryController extends Controller
         }
         $category->delete();
 
-        return response()->json(null, 204);
+        return response()->json('Category delete', 204);
     }
 }

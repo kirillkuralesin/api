@@ -13,13 +13,25 @@ class ItemController extends Controller
     }
     public function create(Request $request)
     {
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|max:255'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
         $item = new Item();
         $item = $item->create($request->all());
         if ($request->has('categories')) {
             $categories = explode(',', $request->input('categories'));
-            $item->categories()->sync($categories);
+
+            try {
+                $item->categories()->sync($categories);
+            }
+            catch(\Exception $e) {
+                return response()->json('Not found categories', 400);
+            }
         }
-        return response()->json($item, 201);
+        return response()->json('Item create', 201);
     }
 
     public function update(Request $request, $id)
@@ -28,14 +40,25 @@ class ItemController extends Controller
         if (is_null($item)) {
             return response()->json('Item not found', 400);
         }
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required|max:255'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
         $item->update($request->all());
         if ($request->has('categories')) {
             $categories = explode(',', $request->input('categories'));
-            $item->categories()->sync($categories);
+            try {
+                $item->categories()->sync($categories);
+            }
+            catch(\Exception $e) {
+                return response()->json('Not found categories', 400);
+            }
         } else {
             $item->categories()->detach();
         }
-        return response()->json($item, 200);
+        return response()->json('Item update', 200);
     }
 
     public function delete(Request $request, $id)
@@ -46,6 +69,6 @@ class ItemController extends Controller
         }
         $item->delete();
 
-        return response()->json(null, 204);
+        return response()->json('Item delete', 204);
     }
 }
